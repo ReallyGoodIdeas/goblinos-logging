@@ -34,13 +34,7 @@ Goblinos Logging is distributed as **source**, not a binary.
 
 ### Option 1: Copy Source
 
-Copy the contents of:
-
-```
-src/Goblinos.Logging/
-```
-
-into your Godot project (for example: `res://Scripts/ThirdParty/Goblinos.Logging/`).
+Copy the contents of the `src/` directory into your Godot project (for example: `res://Scripts/ThirdParty/Goblinos.Logging/`).
 
 ### Option 2: Git Submodule
 
