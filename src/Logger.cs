@@ -1,5 +1,6 @@
 ﻿using System;
 
+// ReSharper disable once CheckNamespace
 namespace Goblinos.Logging;
 
 /// <summary>
@@ -22,6 +23,11 @@ public sealed class Logger
     private readonly Type _componentType;
     private readonly string _componentName;
 
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    // ReSharper disable once MemberCanBePrivate.Global
+    // ReSharper disable once ConvertToConstant.Global
+    public bool Enabled { get; private set; } = true;
+
     /// <summary>
     /// Creates a logger bound to a specific component type.
     /// Intended to be constructed only by <see cref="LogManager"/>.
@@ -42,6 +48,8 @@ public sealed class Logger
     /// </summary>
     public void Log(string message, LogSeverity severity, string categoryKey)
     {
+        if (!Enabled)
+            return;
         LogManager.LogInternal(_componentType, _componentName, message, severity, categoryKey);
     }
 
@@ -104,15 +112,15 @@ public sealed class Logger
     /// <summary>
     /// Logs a warning-level message indicating a potential issue.
     /// </summary>
-    public void Warning(string message, string categoryKey)
+    public void Warn(string message, string categoryKey)
     {
-        Log(message, LogSeverity.Warning, categoryKey);
+        Log(message, LogSeverity.Warn, categoryKey);
     }
 
     /// <inheritdoc cref="Warning(string,string)"/>
-    public void Warning(string message, LogCategory category = LogCategory.None)
+    public void Warn(string message, LogCategory category = LogCategory.None)
     {
-        Log(message, LogSeverity.Warning, category);
+        Log(message, LogSeverity.Warn, category);
     }
 
     /// <summary>
@@ -141,5 +149,23 @@ public sealed class Logger
     public void Critical(string message, LogCategory category = LogCategory.None)
     {
         Log(message, LogSeverity.Critical, category);
+    }
+
+    /// <summary>
+    /// Sets the component type associated with this logger as enabled
+    /// </summary>
+    public void Enable()
+    {
+        Enabled = true;
+        // LogManager.SetComponentEnabled(_componentType, true);
+    }
+    
+    /// <summary>
+    /// Sets the component type associated with this logger as disabled
+    /// </summary>
+    public void Disable()
+    {
+        Enabled = false;
+        // LogManager.SetComponentEnabled(_componentType, false);
     }
 }

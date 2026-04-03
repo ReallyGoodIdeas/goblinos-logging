@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Godot;
 
 namespace Goblinos.Logging;
@@ -177,7 +178,7 @@ public class LogManager
             case >= LogSeverity.Error:
                 GD.PushError(formatted);
                 break;
-            case >= LogSeverity.Warning:
+            case >= LogSeverity.Warn:
                 GD.PushWarning(formatted);
                 break;
             default:
@@ -369,7 +370,20 @@ public class LogManager
     /// </summary>
     public static void SetComponentEnabled<T>(bool enabled)
     {
-        LoggingEnabledByComponent[typeof(T)] = enabled;
+        var type = typeof(T);
+        LogInternal(typeof(LogManager), nameof(LogManager), $"[{type.Name}] Component {(enabled ? "Enabled":"Disabled")}", LogSeverity.Trace, LogCategory.Initialization);
+        LoggingEnabledByComponent[type] = enabled;
+    }
+    
+    /// <summary>
+    /// Enables or disables logging for a specific component type.
+    /// </summary>
+    public static void SetComponentEnabled(Type componentType, bool enabled)
+    {
+        ArgumentNullException.ThrowIfNull(componentType);
+
+        LogInternal(typeof(LogManager), nameof(LogManager), $"[{componentType.Name}] Component {(enabled ? "Enabled":"Disabled")}", LogSeverity.Trace, LogCategory.Initialization);
+        LoggingEnabledByComponent[componentType] = enabled;
     }
 
     // ---------------------------------------------------------------------
