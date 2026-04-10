@@ -10,7 +10,7 @@ namespace Goblinos.Logging;
 /// log verbosity, routing, categorization, and component-level filtering.
 ///
 /// <para>
-/// <see cref="LogManager"/> is responsible for:
+/// <see cref="GobLogManager"/> is responsible for:
 /// <list type="bullet">
 /// <item>Global enable/disable of logging</item>
 /// <item>Minimum severity filtering</item>
@@ -21,12 +21,12 @@ namespace Goblinos.Logging;
 /// </para>
 ///
 /// <para>
-/// Most gameplay code should not call <see cref="LogManager"/> directly.
+/// Most gameplay code should not call <see cref="GobLogManager"/> directly.
 /// Instead, obtain a per-class logger via <see cref="For{T}"/> and log
-/// through <see cref="Logger"/>.
+/// through <see cref="GobLogger"/>.
 /// </para>
 /// </summary>
-public class LogManager
+public class GobLogManager
 {
     /// <summary>
     /// Globally enables or disables all logging.
@@ -37,7 +37,7 @@ public class LogManager
     /// <summary>
     /// Logs below this severity level are discarded.
     /// </summary>
-    public static LogSeverity MinimumLoggingSeverity { get; set; } = LogSeverity.Trace;
+    public static GobLogSeverity MinimumLoggingSeverity { get; set; } = GobLogSeverity.Trace;
 
     /// <summary>
     /// Controls whether unknown category keys encountered at runtime
@@ -63,35 +63,35 @@ public class LogManager
         new(StringComparer.OrdinalIgnoreCase)
         {
             // Core & Engine-Level
-            { nameof(LogCategory.None), true },
-            { nameof(LogCategory.Initialization), true },
-            { nameof(LogCategory.Exit), true },
-            { nameof(LogCategory.Error), true },
-            { nameof(LogCategory.Warning), true },
-            { nameof(LogCategory.Signal), true },
+            { nameof(GobLogCategory.None), true },
+            { nameof(GobLogCategory.Initialization), true },
+            { nameof(GobLogCategory.Exit), true },
+            { nameof(GobLogCategory.Error), true },
+            { nameof(GobLogCategory.Warning), true },
+            { nameof(GobLogCategory.Signal), true },
 
             // Input & Cursor
-            { nameof(LogCategory.Input), true },
-            { nameof(LogCategory.UiNavigation), true },
+            { nameof(GobLogCategory.Input), true },
+            { nameof(GobLogCategory.UiNavigation), true },
 
             // Battle & Gameplay Flow
-            { nameof(LogCategory.BattleState), true },
-            { nameof(LogCategory.CombatResolution), true },
+            { nameof(GobLogCategory.BattleState), true },
+            { nameof(GobLogCategory.CombatResolution), true },
 
             // Units & AI
-            { nameof(LogCategory.UnitLifecycle), true },
-            { nameof(LogCategory.UnitStats), false },
-            { nameof(LogCategory.AiDecision), true },
-            { nameof(LogCategory.AiMovement), false },
+            { nameof(GobLogCategory.UnitLifecycle), true },
+            { nameof(GobLogCategory.UnitStats), false },
+            { nameof(GobLogCategory.AiDecision), true },
+            { nameof(GobLogCategory.AiMovement), false },
 
             // Data & Resources
-            { nameof(LogCategory.DataLoading), true },
-            { nameof(LogCategory.Serialization), true },
-            { nameof(LogCategory.Validation), true },
+            { nameof(GobLogCategory.DataLoading), true },
+            { nameof(GobLogCategory.Serialization), true },
+            { nameof(GobLogCategory.Validation), true },
 
             // Performance / Diagnostics
-            { nameof(LogCategory.Performance), false },
-            { nameof(LogCategory.DebugOnly), false }
+            { nameof(GobLogCategory.Performance), false },
+            { nameof(GobLogCategory.DebugOnly), false }
         };
 
     /// <summary>
@@ -115,9 +115,9 @@ public class LogManager
     /// Creates a per-class logger bound to the specified component type.
     /// This is the preferred entry point for logging from gameplay code.
     /// </summary>
-    public static Logger For<T>()
+    public static GobLogger For<T>()
     {
-        return new Logger(typeof(T), typeof(T).Name);
+        return new GobLogger(typeof(T), typeof(T).Name);
     }
 
     // ---------------------------------------------------------------------
@@ -128,9 +128,9 @@ public class LogManager
     /// Logs a message with an explicit severity and string-based category key.
     /// Intended for dynamic or externally-defined categories.
     /// </summary>
-    public static void Log(string str, LogSeverity severity, string categoryKey)
+    public static void Log(string str, GobLogSeverity severity, string categoryKey)
     {
-        LogInternal(typeof(LogManager), nameof(LogManager), str, severity, categoryKey);
+        LogInternal(typeof(GobLogManager), nameof(GobLogManager), str, severity, categoryKey);
     }
 
     /// <summary>
@@ -138,10 +138,10 @@ public class LogManager
     /// </summary>
     public static void Log(
         string str,
-        LogSeverity severity = LogSeverity.Trace,
-        LogCategory category = LogCategory.None)
+        GobLogSeverity severity = GobLogSeverity.Trace,
+        GobLogCategory category = GobLogCategory.None)
     {
-        LogInternal(typeof(LogManager), nameof(LogManager), str, severity, category);
+        LogInternal(typeof(GobLogManager), nameof(GobLogManager), str, severity, category);
     }
 
     // ---------------------------------------------------------------------
@@ -149,14 +149,14 @@ public class LogManager
     // ---------------------------------------------------------------------
 
     /// <summary>
-    /// Core logging implementation used by <see cref="Logger"/>.
+    /// Core logging implementation used by <see cref="GobLogger"/>.
     /// Applies global, category, and component filters before emitting output.
     /// </summary>
     internal static void LogInternal(
         Type componentType,
         string componentName,
         string message,
-        LogSeverity severity,
+        GobLogSeverity severity,
         string categoryKey)
     {
         if (!LoggingEnabled || severity < MinimumLoggingSeverity)
@@ -172,13 +172,13 @@ public class LogManager
 
         switch (severity)
         {
-            case >= LogSeverity.Critical:
+            case >= GobLogSeverity.Critical:
                 GD.PushError($"[CRITICAL] {formatted}");
                 break;
-            case >= LogSeverity.Error:
+            case >= GobLogSeverity.Error:
                 GD.PushError(formatted);
                 break;
-            case >= LogSeverity.Warn:
+            case >= GobLogSeverity.Warn:
                 GD.PushWarning(formatted);
                 break;
             default:
@@ -191,8 +191,8 @@ public class LogManager
         Type componentType,
         string componentName,
         string message,
-        LogSeverity severity,
-        LogCategory category)
+        GobLogSeverity severity,
+        GobLogCategory category)
     {
         LogInternal(componentType, componentName, message, severity, ToCategoryKey(category));
     }
@@ -244,7 +244,7 @@ public class LogManager
     /// Enables only the specified enum-based categories.
     /// All other categories are disabled.
     /// </summary>
-    public static void EnableOnlyCategories(params LogCategory[] categories)
+    public static void EnableOnlyCategories(params GobLogCategory[] categories)
     {
         SetAllCategories(false);
 
@@ -286,7 +286,7 @@ public class LogManager
 
         if (!exists && ShouldRegisterNewCategories)
         {
-            if (MinimumLoggingSeverity <= LogSeverity.Trace)
+            if (MinimumLoggingSeverity <= GobLogSeverity.Trace)
                 GD.Print(
                     $"[DebugUtil] Unregistered category [{categoryKey}]. Auto registering.");
 
@@ -297,7 +297,7 @@ public class LogManager
         return enabled;
     }
 
-    public static bool IsCategoryEnabled(LogCategory category)
+    public static bool IsCategoryEnabled(GobLogCategory category)
     {
         return IsCategoryEnabled(ToCategoryKey(category));
     }
@@ -326,7 +326,7 @@ public class LogManager
     }
 
     public static void RegisterCategory(
-        LogCategory category,
+        GobLogCategory category,
         bool enabledByDefault = true)
     {
         RegisterCategory(ToCategoryKey(category), enabledByDefault);
@@ -350,7 +350,7 @@ public class LogManager
         if (!LoggingEnabledByCategoryKey.ContainsKey(categoryKey)
             && ShouldRegisterNewCategories)
         {
-            if (MinimumLoggingSeverity <= LogSeverity.Trace)
+            if (MinimumLoggingSeverity <= GobLogSeverity.Trace)
                 GD.Print(
                     $"[DebugUtil] Unregistered category [{categoryKey}]. Auto registering.");
 
@@ -360,7 +360,7 @@ public class LogManager
         LoggingEnabledByCategoryKey[categoryKey] = enabled;
     }
 
-    public static void SetCategoryEnabled(LogCategory category, bool enabled)
+    public static void SetCategoryEnabled(GobLogCategory category, bool enabled)
     {
         SetCategoryEnabled(ToCategoryKey(category), enabled);
     }
@@ -371,7 +371,7 @@ public class LogManager
     public static void SetComponentEnabled<T>(bool enabled)
     {
         var type = typeof(T);
-        LogInternal(typeof(LogManager), nameof(LogManager), $"[{type.Name}] Component {(enabled ? "Enabled":"Disabled")}", LogSeverity.Trace, LogCategory.Initialization);
+        LogInternal(typeof(GobLogManager), nameof(GobLogManager), $"[{type.Name}] Component {(enabled ? "Enabled":"Disabled")}", GobLogSeverity.Trace, GobLogCategory.Initialization);
         LoggingEnabledByComponent[type] = enabled;
     }
     
@@ -382,7 +382,7 @@ public class LogManager
     {
         ArgumentNullException.ThrowIfNull(componentType);
 
-        LogInternal(typeof(LogManager), nameof(LogManager), $"[{componentType.Name}] Component {(enabled ? "Enabled":"Disabled")}", LogSeverity.Trace, LogCategory.Initialization);
+        LogInternal(typeof(GobLogManager), nameof(GobLogManager), $"[{componentType.Name}] Component {(enabled ? "Enabled":"Disabled")}", GobLogSeverity.Trace, GobLogCategory.Initialization);
         LoggingEnabledByComponent[componentType] = enabled;
     }
 
@@ -398,7 +398,7 @@ public class LogManager
             LoggingEnabledByCategoryKey[key] = enabled;
     }
 
-    private static string ToCategoryKey(LogCategory category)
+    private static string ToCategoryKey(GobLogCategory category)
     {
         return category.ToString();
     }

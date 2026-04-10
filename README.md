@@ -1,4 +1,4 @@
-﻿# Goblinos Logging
+﻿# Goblinos GobLogger
 
 A lightweight, extensible logging framework for **Godot 4.x C# projects**, focused on clarity, control, and low-noise debugging.
 
@@ -55,13 +55,13 @@ Ensure the `.cs` files are included in your Godot C# project.
 ```csharp
 using Goblinos.Logging;
 
-private static readonly Logger Log = LogManager.For<GridCursor>();
+private static readonly GobLogger Log = GogLogManager.For<GridCursor>();
 ```
 
 ```csharp
-Log.Trace("Cursor moved", LogCategory.UiNavigation);
-Log.Info("Turn started", LogCategory.BattleState);
-Log.Warning("Grid reference missing", LogCategory.Initialization);
+Log.Trace("Cursor moved", GobGobLogCategory.UiNavigation);
+Log.Info("Turn started", GobGobLogCategory.BattleState);
+Log.Warning("Grid reference missing", GobGobLogCategory.Initialization);
 ```
 
 Per-class loggers bind the component identity once, keeping call sites concise.
@@ -94,8 +94,8 @@ Categories represent **stable subsystems**, not message importance.
 
 ```csharp
 LogManager.EnableOnlyCategories(
-    LogCategory.UiNavigation,
-    LogCategory.Input
+    GobLogCategory.UiNavigation,
+    GobLogCategory.Input
 );
 ```
 
@@ -118,7 +118,7 @@ All other categories will be disabled.
 * Discoverable
 
 ```csharp
-Log.Info("Phase changed", LogCategory.BattleState);
+Log.Info("Phase changed", GobLogCategory.BattleState);
 ```
 
 ### String categories

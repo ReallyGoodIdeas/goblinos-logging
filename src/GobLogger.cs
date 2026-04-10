@@ -8,17 +8,17 @@ namespace Goblinos.Logging;
 /// so call sites do not need to pass a component parameter for each log.
 ///
 /// <para>
-/// <see cref="Logger"/> instances are created via <see cref="LogManager.For{T}"/> and
+/// <see cref="GobLogger"/> instances are created via <see cref="GobLogManager.For{T}"/> and
 /// automatically include the component name in all log output.
 /// </para>
 ///
 /// <para>
-/// This class is a thin facade over <see cref="LogManager"/> and respects all global
+/// This class is a thin facade over <see cref="GobLogManager"/> and respects all global
 /// logging configuration, including severity thresholds, category filters, and
 /// component filters.
 /// </para>
 /// </summary>
-public sealed class Logger
+public sealed class GobLogger
 {
     private readonly Type _componentType;
     private readonly string _componentName;
@@ -30,9 +30,9 @@ public sealed class Logger
 
     /// <summary>
     /// Creates a logger bound to a specific component type.
-    /// Intended to be constructed only by <see cref="LogManager"/>.
+    /// Intended to be constructed only by <see cref="GobLogManager"/>.
     /// </summary>
-    internal Logger(Type componentType, string componentName)
+    internal GobLogger(Type componentType, string componentName)
     {
         _componentName = componentName;
         _componentType = componentType;
@@ -46,20 +46,20 @@ public sealed class Logger
     /// Logs a message with an explicit severity and string-based category key.
     /// This overload is intended for dynamic or externally-defined categories.
     /// </summary>
-    public void Log(string message, LogSeverity severity, string categoryKey)
+    public void Log(string message, GobLogSeverity severity, string categoryKey)
     {
         if (!Enabled)
             return;
-        LogManager.LogInternal(_componentType, _componentName, message, severity, categoryKey);
+        GobLogManager.LogInternal(_componentType, _componentName, message, severity, categoryKey);
     }
 
     /// <summary>
     /// Logs a message with an explicit severity and enum-based category.
     /// This is the preferred overload when using project-defined categories.
     /// </summary>
-    public void Log(string message, LogSeverity severity, LogCategory category)
+    public void Log(string message, GobLogSeverity severity, GobLogCategory category)
     {
-        LogManager.LogInternal(_componentType, _componentName, message, severity, category);
+        GobLogManager.LogInternal(_componentType, _componentName, message, severity, category);
     }
 
     // ---------------------------------------------------------------------
@@ -72,13 +72,13 @@ public sealed class Logger
     /// </summary>
     public void Extra(string message, string categoryKey)
     {
-        Log(message, LogSeverity.Extra, categoryKey);
+        Log(message, GobLogSeverity.Extra, categoryKey);
     }
 
     /// <inheritdoc cref="Extra(string,string)"/>
-    public void Extra(string message, LogCategory category = LogCategory.None)
+    public void Extra(string message, GobLogCategory category = GobLogCategory.None)
     {
-        Log(message, LogSeverity.Extra, category);
+        Log(message, GobLogSeverity.Extra, category);
     }
 
     /// <summary>
@@ -86,13 +86,13 @@ public sealed class Logger
     /// </summary>
     public void Trace(string message, string categoryKey)
     {
-        Log(message, LogSeverity.Trace, categoryKey);
+        Log(message, GobLogSeverity.Trace, categoryKey);
     }
 
     /// <inheritdoc cref="Trace(string,string)"/>
-    public void Trace(string message, LogCategory category = LogCategory.None)
+    public void Trace(string message, GobLogCategory category = GobLogCategory.None)
     {
-        Log(message, LogSeverity.Trace, category);
+        Log(message, GobLogSeverity.Trace, category);
     }
 
     /// <summary>
@@ -100,13 +100,13 @@ public sealed class Logger
     /// </summary>
     public void Info(string message, string categoryKey)
     {
-        Log(message, LogSeverity.Info, categoryKey);
+        Log(message, GobLogSeverity.Info, categoryKey);
     }
 
     /// <inheritdoc cref="Info(string,string)"/>
-    public void Info(string message, LogCategory category = LogCategory.None)
+    public void Info(string message, GobLogCategory category = GobLogCategory.None)
     {
-        Log(message, LogSeverity.Info, category);
+        Log(message, GobLogSeverity.Info, category);
     }
 
     /// <summary>
@@ -114,13 +114,13 @@ public sealed class Logger
     /// </summary>
     public void Warn(string message, string categoryKey)
     {
-        Log(message, LogSeverity.Warn, categoryKey);
+        Log(message, GobLogSeverity.Warn, categoryKey);
     }
 
     /// <inheritdoc cref="Warning(string,string)"/>
-    public void Warn(string message, LogCategory category = LogCategory.None)
+    public void Warn(string message, GobLogCategory category = GobLogCategory.None)
     {
-        Log(message, LogSeverity.Warn, category);
+        Log(message, GobLogSeverity.Warn, category);
     }
 
     /// <summary>
@@ -128,13 +128,13 @@ public sealed class Logger
     /// </summary>
     public void Error(string message, string categoryKey)
     {
-        Log(message, LogSeverity.Error, categoryKey);
+        Log(message, GobLogSeverity.Error, categoryKey);
     }
 
     /// <inheritdoc cref="Error(string,string)"/>
-    public void Error(string message, LogCategory category = LogCategory.None)
+    public void Error(string message, GobLogCategory category = GobLogCategory.None)
     {
-        Log(message, LogSeverity.Error, category);
+        Log(message, GobLogSeverity.Error, category);
     }
 
     /// <summary>
@@ -142,13 +142,13 @@ public sealed class Logger
     /// </summary>
     public void Critical(string message, string categoryKey)
     {
-        Log(message, LogSeverity.Critical, categoryKey);
+        Log(message, GobLogSeverity.Critical, categoryKey);
     }
 
     /// <inheritdoc cref="Critical(string,string)"/>
-    public void Critical(string message, LogCategory category = LogCategory.None)
+    public void Critical(string message, GobLogCategory category = GobLogCategory.None)
     {
-        Log(message, LogSeverity.Critical, category);
+        Log(message, GobLogSeverity.Critical, category);
     }
 
     /// <summary>

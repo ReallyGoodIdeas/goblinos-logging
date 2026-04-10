@@ -1,5 +1,5 @@
 ﻿namespace Goblinos.Logging;
-public enum LogCategory
+public enum GobLogCategory
 {
     // Core & Engine-Level
     None,               // Default / uncategorized

@@ -1,5 +1,5 @@
 ﻿namespace Goblinos.Logging;
-public enum LogSeverity
+public enum GobLogSeverity
 {
     Extra = -1,    // Extremely spammy logs that will dominate the console
     Trace = 0,     // Minor info
