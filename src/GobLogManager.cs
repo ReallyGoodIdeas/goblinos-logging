@@ -80,7 +80,7 @@ public class GobLogManager
 
             // Units & AI
             { nameof(GobLogCategory.UnitLifecycle), true },
-            { nameof(GobLogCategory.UnitStats), false },
+            { nameof(GobLogCategory.UnitStats), true },
             { nameof(GobLogCategory.AiDecision), true },
             { nameof(GobLogCategory.AiMovement), false },
 
